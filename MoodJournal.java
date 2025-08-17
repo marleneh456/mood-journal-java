@@ -178,24 +178,31 @@ public class MoodJournal extends JFrame {
 
     private void saveEntry() {
         try {
-            String folderName = "PersonalJournal";
-            File folder = new File(folderName);
+            // --- Build generic OneDrive PersonalJournal folder ---
+            String folderPath = System.getenv("USERPROFILE") + "\\OneDrive\\Documents\\PersonalJournal";
+            File folder = new File(folderPath);
             if (!folder.exists()) {
-                folder.mkdir();
+                folder.mkdirs(); // create folder if it doesn't exist
             }
-            String docFileName = folderName + File.separator + "MoodJournal_" + formattedDate.replace("/", "-") + ".doc";
+
+            // --- Save text file ---
+            String docFileName = folderPath + File.separator + "MoodJournal_" + formattedDate.replace("/", "-") + ".doc";
             FileWriter writer = new FileWriter(docFileName);
             writer.write("Date: " + formattedDate + "\n");
             writer.write("Mood: " + mood + "\n\n");
             writer.write("Note:\n" + noteArea.getText() + "\n");
             writer.close();
-            String imageName = folderName + File.separator + "MoodDrawing_" + formattedDate.replace("/", "-") + ".png";
+
+            // --- Save drawing image ---
+            String imageName = folderPath + File.separator + "MoodDrawing_" + formattedDate.replace("/", "-") + ".png";
             ImageIO.write(drawPanel.getImage(), "PNG", new File(imageName));
+
             JOptionPane.showMessageDialog(this, "Saved!\nText: " + docFileName + "\nDrawing: " + imageName);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error saving: " + ex.getMessage());
         }
     }
+
 
     // Drawing panel with pen/eraser/shape/fill
     private class DrawPanel extends JPanel {
